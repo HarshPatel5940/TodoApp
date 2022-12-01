@@ -1,54 +1,44 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient } = require("mongodb");
 import dotenv from "dotenv";
 const express = require("express");
+import { nanoid } from "nanoid";
 const app = express();
+
+dotenv.config();
 app.use(express.json());
 
-// dotenv.config({ path: ".env.test" });
-dotenv.config();
-
-// const uri =
-//     "mongodb+srv://hp8823:<password>@cluster1.xzubd4k.mongodb.net/?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     serverApi: ServerApiVersion.v1,
-// });
-
-// client.connect((err) => {
-//     const collection = client.db("test").collection("devices");
-//     // perform actions on the collection object
-//     client.close();
-// });
-
-let MoviesArr = [
-    {
-        id: 0,
-        TaskTitle: "",
-        TaskDesc: "",
-    },
-];
+// @ts-ignore -- this is for my extension
+const client = new MongoClient(process.env.MONGO_URI);
 
 app.get("/", function (req, res) {
     console.log("redirecting to /tasks");
     res.status(302).redirect("http://localhost:3000/tasks");
 });
 
-app.get("/tasks", function (req, res) {
-    res.status(200).json({ data: MoviesArr, message: "Tasks Data fetched!" });
+app.get("/healthcheck", function (req, res) {
+    // TODO: Need to add checks if connection with mongo db is alive.
+
+    res.status(200).json({ message: "All systems working functional!" });
 });
 
-// app.post("/movie/new/", function (req, res) {
-//     MoviesArr.push(req.body);
-//     res.status(200).json({ data: MoviesArr });
-// });
+app.patch("/tasks/:id", function (req, res) {
+    res.status(200).json({ message: "All the changes have been made" });
+});
 
-// app.delete("/movie/delete/:id", function (req, res) {
-//     MoviesArr = MoviesArr.filter(function (el) {
-//         return req.params.id !== el.id.toString();
-//     });
-//     res.status(200).json({ data: MoviesArr });
-// });
+app.post("/task/new/", function (req, res) {
+    // ! we need to use email and unique id
+    const newUuid = nanoid();
+
+    res.status(200).json({
+        // TODO: add {data: <data>}
+    });
+});
+
+app.delete("/tasks/:id", function (req, res) {
+    res.status(200).json({
+        // TODO: add {data: <data>}
+    });
+});
 
 app.listen(3000, () => {
     console.log("Server started at PORT: 3000");
