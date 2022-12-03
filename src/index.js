@@ -1,14 +1,6 @@
-const { MongoClient } = require("mongodb");
-import dotenv from "dotenv";
-const express = require("express");
-import { nanoid } from "nanoid";
+import express, { json } from "express";
 const app = express();
-
-dotenv.config();
-app.use(express.json());
-
-// @ts-ignore -- this is for my extension
-const client = new MongoClient(process.env.MONGO_URI);
+app.use(json());
 
 app.get("/", function (req, res) {
     console.log("redirecting to /tasks");
@@ -18,17 +10,29 @@ app.get("/", function (req, res) {
 app.get("/healthcheck", function (req, res) {
     // TODO: Need to add checks if connection with mongo db is alive.
 
-    res.status(200).json({ message: "All systems working functional!" });
+    (function (err) {
+        if (err) {
+            console.log("Error connecting to mongodb");
+            res.status(500).json({
+                status: "error",
+                message: "Error connecting to mongodb",
+            });
+        } else {
+            console.log("Successfully connected to mongodb");
+            res.status(200).json({
+                status: "ok",
+                message: "Successfully connected to mongodb",
+            });
+        }
+    });
 });
 
 app.patch("/tasks/:id", function (req, res) {
     res.status(200).json({ message: "All the changes have been made" });
 });
 
-app.post("/task/new/", function (req, res) {
+app.post("/task/new/", async function (req, res) {
     // ! we need to use email and unique id
-    const newUuid = nanoid();
-
     res.status(200).json({
         // TODO: add {data: <data>}
     });
