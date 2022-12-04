@@ -51,4 +51,97 @@ async function NewTask(Document) {
     }
 }
 
-export { CheckConnection, NewTask };
+async function DeleteTask(id) {
+    try {
+        await client.connect();
+        console.log("Mongo : 200 : Connection established");
+        await collection.deleteOne({
+            _id: id,
+        });
+        console.log("/tasks/:id : 302 & 200 : Document Deleted");
+        return 200;
+    } catch (err) {
+        console.log("Mongo : 403 : ERROR connecting to mongodb");
+        console.log(err);
+        return 403;
+    } finally {
+        await client.close();
+        console.log("Mongo : 200 : Connection Closed");
+    }
+}
+
+async function UpdateTask(id, Document) {
+    if (await ObjCheck(Document)) {
+        try {
+            await client.connect();
+            console.log("Mongo : 200 : Connection established");
+            await collection.updateOne(
+                {
+                    _id: id,
+                },
+                {
+                    $set: Document,
+                }
+            );
+            console.log("/tasks/:id : 302 & 200 : Document Updated");
+            return 200;
+        } catch (err) {
+            console.log("Mongo : 403 : ERROR connecting to mongodb");
+            console.log(err);
+            return 403;
+        } finally {
+            await client.close();
+            console.log("Mongo : 200 : Connection Closed");
+        }
+    } else {
+        console.log("/tasks/:id : 400 : Please Provide Correct Object type");
+        return 400;
+    }
+}
+
+async function GetTask(id) {
+    try {
+        await client.connect();
+        console.log("Mongo : 200 : Connection established");
+        const result = await collection.findOne({
+            _id: id,
+        });
+        console.log("/tasks/:id : 302 & 200 : Document Found");
+        return result;
+    } catch (err) {
+        console.log("Mongo : 403 : ERROR connecting to mongodb");
+        console.log(err);
+        return 403;
+    } finally {
+        await client.close();
+        console.log("Mongo : 200 : Connection Closed");
+    }
+}
+
+async function GetAllTasks(email) {
+    try {
+        await client.connect();
+        console.log("Mongo : 200 : Connection established");
+        const result = await collection.find({
+            email: email,
+        });
+        console.log("/tasks : 302 & 200 : Documents Found");
+        return result;
+    } catch (err) {
+        console.log("Mongo : 403 : ERROR connecting to mongodb");
+        console.log(err);
+        return 403;
+    } finally {
+        await client.close();
+        console.log("Mongo : 200 : Connection Closed");
+    }
+}
+
+export {
+    CheckConnection,
+    NewTask,
+    DeleteTask,
+    UpdateTask,
+    GetTask,
+    GetAllTasks,
+};

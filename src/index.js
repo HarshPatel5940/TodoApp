@@ -8,9 +8,14 @@ app.get("/", function (req, res) {
     res.status(302).redirect("http://localhost:3000/tasks");
 });
 
+app.get("/tasks", function (req, res) {});
+
 app.get("/healthcheck", async function (req, res) {
     const code = await CheckConnection();
-    res.status(code).send(`Code ${code} : Check console for more info`);
+    res.status(code).json({
+        status: code,
+        message: "Check console for more info",
+    });
 });
 
 app.patch("/tasks/:id", function (req, res) {
@@ -18,13 +23,13 @@ app.patch("/tasks/:id", function (req, res) {
 });
 
 app.post("/task/new/", async function (req, res) {
-    const code = NewTask(req.body);
+    const code = await NewTask(req.body);
+    res.status(code).send(`Code ${code} : Check console for more info`);
 });
 
-app.delete("/tasks/:id", function (req, res) {
-    res.status(200).json({
-        // TODO: add {data: <data>}
-    });
+app.delete("/tasks/:id", async function (req, res) {
+    const code = 200;
+    res.status(code).send(`Code ${code} : Check console for more info`);
 });
 
 app.listen(3000, () => {
