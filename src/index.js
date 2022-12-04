@@ -10,7 +10,7 @@ app.get("/", function (req, res) {
 
 app.get("/healthcheck", async function (req, res) {
     const code = await CheckConnection();
-    res.status(code).send("Code ${code} : Check console for more info");
+    res.status(code).send(`Code ${code} : Check console for more info`);
 });
 
 app.patch("/tasks/:id", function (req, res) {
@@ -18,10 +18,7 @@ app.patch("/tasks/:id", function (req, res) {
 });
 
 app.post("/task/new/", async function (req, res) {
-    // ! we need to use email and unique id
-    res.status(200).json({
-        // TODO: add {data: <data>}
-    });
+    const code = NewTask(req.body);
 });
 
 app.delete("/tasks/:id", function (req, res) {

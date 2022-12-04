@@ -17,15 +17,15 @@ const collection = db.collection("tasks");
 async function CheckConnection() {
     try {
         await client.connect();
-        console.log("Mongo : Connection established");
+        console.log("Mongo : 200 : Connection established");
         return 200;
     } catch (err) {
-        console.log("Mongo : ERROR connecting to mongodb");
+        console.log("Mongo : 403 : ERROR connecting to mongodb");
         console.log(err);
         return 403;
     } finally {
         await client.close();
-        console.log("Mongo : Connection Closed.");
+        console.log("Mongo : 200 : Connection Closed.");
     }
 }
 
@@ -33,18 +33,20 @@ async function NewTask(Document) {
     if (await ObjCheck(Document)) {
         try {
             await client.connect();
-            console.log("Mongo : Connection established");
+            console.log("Mongo : 200 : Connection established");
             await collection.insertOne(Document);
-            return 302;
+            console.log("/task/new : 201 : Document Inserted");
+            return 201;
         } catch (err) {
-            console.log("Mongo : ERROR connecting to mongodb");
+            console.log("Mongo : 403 : ERROR connecting to mongodb");
             console.log(err);
             return 403;
         } finally {
             await client.close();
+            console.log("Mongo : 200 : Connection Closed");
         }
     } else {
-        console.log("BAD REQUEST/INFO : Please Provide Correct Object type");
+        console.log("/tasks/new : 400 : Please Provide Correct Object type");
         return 400;
     }
 }
