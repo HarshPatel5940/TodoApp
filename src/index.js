@@ -1,35 +1,60 @@
 import express, { json } from "express";
 const app = express();
 app.use(json());
-import { CheckConnection, NewTask } from "./func/mongo.js";
+import {
+    CheckConnection,
+    DeleteTask,
+    GetAllTasks,
+    GetTask,
+    NewTask,
+    UpdateTask,
+} from "./func/mongo.js";
 
 app.get("/", function (req, res) {
-    console.log("redirecting to /tasks");
-    res.status(302).redirect("http://localhost:3000/tasks");
+    res.status(302).send(
+        `Hello World!  
+        
+            Check out /tasks and other things for more info!`
+    );
 });
 
-app.get("/tasks", function (req, res) {});
+app.get("/tasks", async function (req, res) {
+    const codeobj = await GetAllTasks(req.query.email);
+    res.status(codeobj.code).send({
+        message: `Code: ${codeobj.code}`,
+        data: codeobj.data,
+    });
+});
+
+app.get("/task/:id", async function (req, res) {
+    const codeobj = await GetTask(req.params.id);
+    res.status(codeobj.code).send({
+        message: `Code: ${codeobj.code}`,
+        data: codeobj.data,
+    });
+});
 
 app.get("/healthcheck", async function (req, res) {
     const code = await CheckConnection();
-    res.status(code).json({
+    res.status(code).send({
         status: code,
         message: "Check console for more info",
     });
 });
 
-app.patch("/tasks/:id", function (req, res) {
-    res.status(200).json({ message: "All the changes have been made" });
+app.patch("/tasks/:id", async function (req, res) {
+    const code = await UpdateTask(req.params.id, req.body);
+    res.status(code).send({ message: `Code: ${code}` });
 });
 
 app.post("/task/new/", async function (req, res) {
     const code = await NewTask(req.body);
-    res.status(code).send(`Code ${code} : Check console for more info`);
+    res.status(code).send(`Code ${code} : Check console`);
 });
 
 app.delete("/tasks/:id", async function (req, res) {
-    const code = 200;
-    res.status(code).send(`Code ${code} : Check console for more info`);
+    const code = await DeleteTask(req.params.id);
+    res.status(code).send(`Code ${code} : Check console`);
 });
 
 app.listen(3000, () => {
