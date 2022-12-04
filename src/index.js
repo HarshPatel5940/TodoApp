@@ -1,30 +1,16 @@
 import express, { json } from "express";
 const app = express();
 app.use(json());
+import { CheckConnection, NewTask } from "./func/mongo.js";
 
 app.get("/", function (req, res) {
     console.log("redirecting to /tasks");
     res.status(302).redirect("http://localhost:3000/tasks");
 });
 
-app.get("/healthcheck", function (req, res) {
-    // TODO: Need to add checks if connection with mongo db is alive.
-
-    (function (err) {
-        if (err) {
-            console.log("Error connecting to mongodb");
-            res.status(500).json({
-                status: "error",
-                message: "Error connecting to mongodb",
-            });
-        } else {
-            console.log("Successfully connected to mongodb");
-            res.status(200).json({
-                status: "ok",
-                message: "Successfully connected to mongodb",
-            });
-        }
-    });
+app.get("/healthcheck", async function (req, res) {
+    const code = await CheckConnection();
+    res.status(code).send("Code ${code} : Check console for more info");
 });
 
 app.patch("/tasks/:id", function (req, res) {

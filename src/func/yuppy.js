@@ -1,6 +1,7 @@
 import { object, string, date } from "yup";
 
 let schema = object().shape({
+    _id: string(),
     taskheader: string().required(),
     taskdesc: string().required(),
     uuid: string(),
