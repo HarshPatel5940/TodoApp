@@ -13,3 +13,5 @@ for dev build
 ```
 npm run dev
 ```
+
+Keep an eye on [Latest Release](https://github.com/HarshPatel5940/TodoApp/releases) for updated work!
