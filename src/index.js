@@ -11,7 +11,7 @@ import {
 } from "./utilities/mongo.js";
 
 app.get("/", function (req, res) {
-    res.status(302).send(
+    res.status(200).send(
         `Hello World!  
         
             Check out /tasks and other things for more info!`
@@ -57,7 +57,6 @@ app.delete("/tasks/:id", async function (req, res) {
     res.status(code).send(`Code ${code} : Check console`);
 });
 
-app.listen(3000, () => {
-    console.log("Server started at PORT: 3000");
-    console.log("http://localhost:3000");
+app.listen(process.env.PORT, () => {
+    console.log(`http://localhost:${process.env.PORT}`);
 });
