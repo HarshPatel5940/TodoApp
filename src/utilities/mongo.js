@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import { MongoClient } from "mongodb";
 config();
 
-import { ObjCheck } from "../func/yuppy.js";
+import { ObjCheck } from "./validation.js";
 
 // @ts-ignore -- this is for my extension
 if (process.env.MONGO_URI === undefined) {

@@ -8,7 +8,7 @@ import {
     GetTask,
     NewTask,
     UpdateTask,
-} from "./func/mongo.js";
+} from "./utilities/mongo.js";
 
 app.get("/", function (req, res) {
     res.status(302).send(
