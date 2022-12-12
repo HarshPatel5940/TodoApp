@@ -11,7 +11,7 @@ import {
     MongoConnect,
 } from "./utilities/mongo.js";
 
-MongoConnect();
+await MongoConnect();
 
 app.get("/", function (req, res) {
     res.status(200).send(
@@ -43,7 +43,7 @@ app.get("/healthcheck", async function (req, res) {
     res.status(200).send("Check console :");
 });
 
-app.patch("/tasks/:id", async function (req, res) {
+app.patch("/task/:id", async function (req, res) {
     const code = await UpdateTask(req.params.id, req.body);
     res.status(code).send({ message: `Code: ${code}` });
 });
@@ -53,7 +53,7 @@ app.post("/task/new/", async function (req, res) {
     res.status(code).send(`Code ${code} : Check console`);
 });
 
-app.delete("/tasks/:id", async function (req, res) {
+app.delete("/task/:id", async function (req, res) {
     const code = await DeleteTask(req.params.id);
     res.status(code).send(`Code ${code} : Check console`);
 });
