@@ -8,7 +8,10 @@ import {
     GetTask,
     NewTask,
     UpdateTask,
+    MongoConnect,
 } from "./utilities/mongo.js";
+
+MongoConnect();
 
 app.get("/", function (req, res) {
     res.status(200).send(
@@ -26,20 +29,18 @@ app.get("/tasks", async function (req, res) {
     });
 });
 
-app.get("/task/:id", async function (req, res) {
-    const codeobj = await GetTask(req.params.id);
-    res.status(codeobj.code).send({
-        message: `Code: ${codeobj.code}`,
-        data: codeobj.data,
+app.get("/task/:uuid", async function (req, res) {
+    const Task = await GetTask(req.params.uuid);
+    res.status(Task.code).send({
+        message: `Code: ${Task.code}`,
+        data: Task.data,
     });
 });
 
 app.get("/healthcheck", async function (req, res) {
-    const code = await CheckConnection();
-    res.status(code).send({
-        status: code,
-        message: "Check console for more info",
-    });
+    // TODO: check connection
+    CheckConnection();
+    res.status(200).send("Check console :");
 });
 
 app.patch("/tasks/:id", async function (req, res) {
@@ -57,6 +58,6 @@ app.delete("/tasks/:id", async function (req, res) {
     res.status(code).send(`Code ${code} : Check console`);
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`http://localhost:${process.env.PORT}`);
+app.listen(process.env.PORT, async () => {
+    console.log(`Starting - Listening at http://localhost:${process.env.PORT}`);
 });
