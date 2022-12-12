@@ -17,6 +17,7 @@ const collection = db.collection("tasks");
 async function MongoConnect() {
     try {
         await client.connect();
+        console.log("Mongo : 200 : do /healthcheck to check connection");
     } catch (err) {
         console.log(err);
         console.log("Mongo : 403 : ERROR connecting to mongodb");
@@ -25,13 +26,10 @@ async function MongoConnect() {
 
 async function CheckConnection() {
     try {
-        MongoConnect();
         const status1 = await client.db("admin").command({
             ping: 1,
         });
-        console.log(
-            `Status: ${status1} :: uptime in seconds: ${process.uptime()}`
-        );
+        console.log(status1, `Uptime: ${process.uptime}`);
     } catch (err) {
         console.log(err);
     }
