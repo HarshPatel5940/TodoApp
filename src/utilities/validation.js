@@ -1,18 +1,27 @@
 import { object, string, date } from "yup";
 
-let schema = object().shape({
-    _id: string().uuid(),
+const schema1 = object().shape({
     taskheader: string().required(),
     taskdesc: string().required(),
-    uuid: string().uuid(),
-    email: string().email(),
+    uuid: string().uuid().required(),
+    email: string().email().required(),
     createdOn: date().default(function () {
         return new Date();
     }),
 });
 
-async function ObjCheck(obj) {
-    return schema.isValid(obj);
+const schema2 = object().shape({
+    taskheader: string().required(),
+    taskdesc: string().required(),
+    uuid: string().uuid().required(),
+});
+
+async function ValidateFull(obj) {
+    return schema1.isValid(obj);
 }
 
-export { ObjCheck };
+async function ValidateUpdate(obj) {
+    return schema2.isValid(obj);
+}
+
+export { ValidateFull, ValidateUpdate };
