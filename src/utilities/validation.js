@@ -1,19 +1,19 @@
 import { object, string, date } from "yup";
 
 const schema1 = object().shape({
-    taskheader: string().required(),
-    taskdesc: string().required(),
-    uuid: string().uuid().required(),
-    email: string().email().required(),
-    createdOn: date().default(function () {
+    TaskHeader: string().trim().required(),
+    TaskDesc: string().trim().required(),
+    Email: string().email().trim().required(),
+    uuid: string().trim().required(),
+    CreatedOn: date().default(function () {
         return new Date();
     }),
 });
 
 const schema2 = object().shape({
-    taskheader: string().required(),
-    taskdesc: string().required(),
-    uuid: string().uuid().required(),
+    taskheader: string().trim().required(),
+    taskdesc: string().trim().required(),
+    uuid: string().trim().required(),
 });
 
 async function ValidateFull(obj) {
