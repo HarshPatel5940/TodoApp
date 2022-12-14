@@ -14,48 +14,54 @@ import {
 await MongoConnect();
 
 app.get("/", function (req, res) {
-    res.status(200).send(
-        `Hello World!  
-        
-            Check out /tasks and other things for more info!`
-    );
+    res.status(200).send(`
+    Hello World!
+
+    Check out /tasks and other things for more info!
+    `);
 });
 
 app.get("/tasks", async function (req, res) {
-    const codeobj = await GetAllTasks(req.query.email);
-    res.status(codeobj.code).send({
-        message: `Code: ${codeobj.code}`,
-        data: codeobj.data,
-    });
+    if (req.body.email) {
+        const Task = await GetAllTasks(req.body.email);
+        res.status(Task.code).send({
+            message: `Code: ${Task.code} : Check console`,
+            data: Task.data,
+        });
+    } else {
+        res.status(400).send({
+            message: `Code: 400 : Check console`,
+            data: "Please provide email in the body",
+        });
+    }
 });
 
 app.get("/task/:uuid", async function (req, res) {
     const Task = await GetTask(req.params.uuid);
     res.status(Task.code).send({
-        message: `Code: ${Task.code}`,
+        message: `Code: ${Task.code} : Check console`,
         data: Task.data,
     });
 });
 
 app.get("/healthcheck", async function (req, res) {
-    // TODO: check connection
-    CheckConnection();
+    await CheckConnection();
     res.status(200).send("Check console :");
 });
 
 app.patch("/task/:id", async function (req, res) {
-    const code = await UpdateTask(req.params.id, req.body);
-    res.status(code).send({ message: `Code: ${code}` });
+    const Task = await UpdateTask(req.params.id, req.body);
+    res.status(Task.code).send(`Code: ${Task.code} : Check console`);
 });
 
 app.post("/task/new/", async function (req, res) {
-    const code = await NewTask(req.body);
-    res.status(code).send(`Code ${code} : Check console`);
+    const Task = await NewTask(req.body);
+    res.status(Task.code).send(`Code ${Task.code} : Check console`);
 });
 
 app.delete("/task/:id", async function (req, res) {
-    const code = await DeleteTask(req.params.id);
-    res.status(code).send(`Code ${code} : Check console`);
+    const Task = await DeleteTask(req.params.id);
+    res.status(Task.code).send(`Code ${Task.code} : Check console`);
 });
 
 app.listen(process.env.PORT, async () => {

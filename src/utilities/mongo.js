@@ -151,5 +151,5 @@ export {
     GetTask,
     GetAllTasks,
     MongoConnect,
-    client,
+    NaNoid,
 };
