@@ -78,9 +78,7 @@ async function NewTask(Document1) {
 async function GetTask(id) {
     try {
         const result = await collection.findOne({
-            $eq: {
-                uuid: id,
-            },
+            uuid: id,
         });
         console.log(result);
         console.log("/tasks/:id : 302 & 200 : Task Document Found");

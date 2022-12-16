@@ -46,8 +46,8 @@ app.get("/tasks", async function (req, res) {
     }
 });
 
-app.get("/task/:uuid", async function (req, res) {
-    const Task = await GetTask(req.params.uuid);
+app.get("/task/:id", async function (req, res) {
+    const Task = await GetTask(req.params.id);
     res.status(Task.code).send({
         message: `Code: ${Task.code} : ${Task.message}`,
         data: Task.Data,
