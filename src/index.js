@@ -26,7 +26,7 @@ app.get("/tasks", async function (req, res) {
         const Task = await GetAllTasks(req.body.email);
         res.status(Task.code).send({
             message: `Code: ${Task.code} : Check console`,
-            data: Task.data,
+            data: Task.Data,
         });
     } else {
         res.status(400).send({
@@ -39,14 +39,14 @@ app.get("/tasks", async function (req, res) {
 app.get("/task/:uuid", async function (req, res) {
     const Task = await GetTask(req.params.uuid);
     res.status(Task.code).send({
-        message: `Code: ${Task.code} : Check console`,
-        data: Task.data,
+        message: `Code: ${Task.code} : ${Task.message}`,
+        data: Task.Data,
     });
 });
 
 app.get("/healthcheck", async function (req, res) {
-    await CheckConnection();
-    res.status(200).send("Check console :");
+    const Status = await CheckConnection();
+    res.status(Status.code).send(Status.message);
 });
 
 app.patch("/task/:id", async function (req, res) {
@@ -56,7 +56,7 @@ app.patch("/task/:id", async function (req, res) {
 
 app.post("/task/new/", async function (req, res) {
     const Task = await NewTask(req.body);
-    res.status(Task.code).send(`Code ${Task.code} : Check console`);
+    res.status(Task.code).send(`Code ${Task.code} : ${Task.Data}`);
 });
 
 app.delete("/task/:id", async function (req, res) {

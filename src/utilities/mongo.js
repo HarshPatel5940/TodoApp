@@ -43,8 +43,9 @@ async function CheckConnection() {
         const status1 = await client.db("admin").command({
             ping: 1,
         });
-        console.log(status1, `Uptime: ${Math.floor(process.uptime())} Seconds`);
-        return { code: 200 };
+        const Data = `Uptime: ${Math.floor(process.uptime())} Seconds`;
+        console.log(status1, Data);
+        return { code: 200, message: Data };
     } catch (err) {
         console.log(err);
         return { code: 403 };
@@ -54,10 +55,15 @@ async function CheckConnection() {
 async function GetTask(id) {
     try {
         const result = await collection.findOne({
-            _id: id,
+            uuid: id,
         });
-        console.log("/tasks/:id : 302 & 200 : Document Found");
-        return { code: 200, data: result };
+        console.log(result);
+        console.log("/tasks/:id : 302 & 200 : Task Document Found");
+        return {
+            code: 200,
+            message: "/tasks/:id : 302 & 200 : Task Document Found",
+            Data: result,
+        };
     } catch (err) {
         console.log("Mongo : 403");
         console.log(err);
@@ -69,12 +75,16 @@ async function GetAllTasks(email) {
     try {
         const result = await collection
             .find({
-                email: email,
+                Email: email,
             })
             .toArray();
 
-        console.log("/tasks : 302 & 200 : Documents Found");
-        return { code: 200, data: result };
+        console.log("/tasks : 302 & 200 : Task Documents Found");
+        return {
+            code: 200,
+            message: "/tasks : 302 & 200 : Task Documents Found",
+            Data: result,
+        };
     } catch (err) {
         console.log("Mongo : 403");
         console.log(err);
@@ -91,9 +101,9 @@ async function NewTask(Document1) {
 
     if (await ValidateFull(Document1)) {
         try {
-            await collection.insertOne(Document);
+            await collection.insertOne(Document1);
             console.log("/task/new : 201 : Document Inserted");
-            return { code: 201 };
+            return { code: 201, Data: "/task/new : 201 : Document Inserted" };
         } catch (err) {
             console.log("Mongo : 403");
             console.log(err);
