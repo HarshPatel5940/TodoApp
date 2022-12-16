@@ -11,8 +11,8 @@ const schema1 = object().shape({
 });
 
 const schema2 = object().shape({
-    taskheader: string().trim().required(),
-    taskdesc: string().trim().required(),
+    TaskHeader: string().trim().required(),
+    TaskDesc: string().trim().required(),
     uuid: string().trim().required(),
 });
 
