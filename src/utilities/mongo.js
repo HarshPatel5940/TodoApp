@@ -52,46 +52,6 @@ async function CheckConnection() {
     }
 }
 
-async function GetTask(id) {
-    try {
-        const result = await collection.findOne({
-            uuid: id,
-        });
-        console.log(result);
-        console.log("/tasks/:id : 302 & 200 : Task Document Found");
-        return {
-            code: 200,
-            message: "/tasks/:id : 302 & 200 : Task Document Found",
-            Data: result,
-        };
-    } catch (err) {
-        console.log("Mongo : 403");
-        console.log(err);
-        return { code: 403 };
-    }
-}
-
-async function GetAllTasks(email) {
-    try {
-        const result = await collection
-            .find({
-                Email: email,
-            })
-            .toArray();
-
-        console.log("/tasks : 302 & 200 : Task Documents Found");
-        return {
-            code: 200,
-            message: "/tasks : 302 & 200 : Task Documents Found",
-            Data: result,
-        };
-    } catch (err) {
-        console.log("Mongo : 403");
-        console.log(err);
-        return { code: 403 };
-    }
-}
-
 async function NewTask(Document1) {
     delete Document1["_id"];
     delete Document1["uuid"];
@@ -115,13 +75,41 @@ async function NewTask(Document1) {
     }
 }
 
-async function DeleteTask(id) {
+async function GetTask(id) {
     try {
-        await collection.deleteOne({
-            uuid: id,
+        const result = await collection.findOne({
+            $eq: {
+                uuid: id,
+            },
         });
-        console.log("/tasks/:id : 302 & 200 : Document Deleted");
-        return { code: 200 };
+        console.log(result);
+        console.log("/tasks/:id : 302 & 200 : Task Document Found");
+        return {
+            code: 302,
+            message: "/tasks/:id : 302 & 200 : Task Document Found",
+            Data: result,
+        };
+    } catch (err) {
+        console.log("Mongo : 403");
+        console.log(err);
+        return { code: 403 };
+    }
+}
+
+async function GetAllTasks(email) {
+    try {
+        const result = await collection
+            .find({
+                Email: email,
+            })
+            .toArray();
+
+        console.log("/tasks : 302 & 200 : Task Documents Found");
+        return {
+            code: 302,
+            message: "/tasks : 302 & 200 : Task Documents Found",
+            Data: result,
+        };
     } catch (err) {
         console.log("Mongo : 403");
         console.log(err);
@@ -130,7 +118,9 @@ async function DeleteTask(id) {
 }
 
 async function UpdateTask(id, Document) {
-    if (await ValidateFull(Document)) {
+    Document["uuid"] = id;
+
+    if (await ValidateUpdate(Document)) {
         try {
             await collection.findOneAndUpdate(
                 {
@@ -141,15 +131,38 @@ async function UpdateTask(id, Document) {
                 }
             );
             console.log("/tasks/:id : 302 & 200 : Document Updated");
-            return { code: 200 };
+            return {
+                code: 200,
+                message: "/tasks/:id : 302 & 200 : Document Updated",
+            };
         } catch (err) {
             console.log("Mongo : 403");
             console.log(err);
-            return { code: 403 };
+            return { code: 403, message: "something went wrong" };
         }
     } else {
         console.log("/tasks/:id : 400 : Please Provide Correct Object type");
-        return { code: 400 };
+        return {
+            code: 400,
+            message: "/tasks/:id : 400 : Please Provide Correct Object type",
+        };
+    }
+}
+
+async function DeleteTask(id) {
+    try {
+        await collection.deleteOne({
+            uuid: id,
+        });
+        console.log("/tasks/:id : 302 & 200 : Document Deleted");
+        return {
+            code: 200,
+            message: "/tasks/:id : 302 & 200 : Document Deleted",
+        };
+    } catch (err) {
+        console.log("Mongo : 403");
+        console.log(err);
+        return { code: 403 };
     }
 }
 
@@ -161,5 +174,4 @@ export {
     GetTask,
     GetAllTasks,
     MongoConnect,
-    NaNoid,
 };
