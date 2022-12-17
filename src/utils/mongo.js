@@ -31,7 +31,7 @@ async function NaNoid() {
 async function MongoConnect() {
     try {
         await client.connect();
-        console.log("Mongo : 200 : initial connection done.");
+        console.log("Mongo : 200 : Connected to mongodb");
     } catch (err) {
         console.log(err);
         console.log("Mongo : 403 : ERROR connecting to mongodb");
@@ -40,57 +40,62 @@ async function MongoConnect() {
 
 async function CheckConnection() {
     try {
-        const status1 = await client.db("admin").command({
+        const status = await client.db("admin").command({
             ping: 1,
         });
         const Data = `Uptime: ${Math.floor(process.uptime())} Seconds`;
-        console.log(status1, Data);
+        console.log(status, Data);
         return { code: 200, message: Data };
     } catch (err) {
         console.log(err);
-        return { code: 403 };
+        return {
+            code: 403,
+            message: "Mongo : 403 : ERROR connecting to mongodb",
+        };
     }
 }
 
-async function NewTask(Document1) {
-    delete Document1["_id"];
-    delete Document1["uuid"];
+async function NewTask(task) {
+    delete task["_id"];
+    delete task["uuid"];
 
-    Document1.uuid = await NaNoid();
-    Document1.createdOn = new Date();
+    task.uuid = await NaNoid();
+    task.createdOn = new Date();
 
-    if (await ValidateFull(Document1)) {
+    if (await ValidateFull(task)) {
         try {
-            await collection.insertOne(Document1);
-            console.log("/task/new : 201 : Document Inserted");
-            return { code: 201, Data: "/task/new : 201 : Document Inserted" };
+            await collection.insertOne(task);
+            console.log("/task/new : 201 : New Task Created");
+            return { code: 201, Data: "/task/new : 201 : New Task Created" };
         } catch (err) {
-            console.log("Mongo : 403");
+            console.log("/task/new : 403 : Mongo Error");
             console.log(err);
-            return { code: 403 };
+            return { code: 403, message: "/task/new : 403 : Mongo Error" };
         }
     } else {
         console.log("/tasks/new : 400 : Please Provide Correct Object type");
-        return { code: 400 };
+        return {
+            code: 400,
+            message: "/tasks/new : 400 : Please Provide Correct Object type",
+        };
     }
 }
 
-async function GetTask(id) {
+async function GetTask(TaskID) {
     try {
         const result = await collection.findOne({
-            uuid: id,
+            uuid: TaskID,
         });
-        console.log(result);
-        console.log("/tasks/:id : 302 & 200 : Task Document Found");
+        console.log("/tasks/:id : 302 & 200 : Task Found");
         return {
             code: 302,
-            message: "/tasks/:id : 302 & 200 : Task Document Found",
+            message: "/tasks/:id : 302 & 200 : Task Found",
             Data: result,
         };
     } catch (err) {
-        console.log("Mongo : 403");
+        console.log("/task/:id : 403 : Mongo Error");
         console.log(err);
-        return { code: 403 };
+        return { code: 403, message: "/task/:id : 403 : Mongo Error" };
     }
 }
 
@@ -102,41 +107,41 @@ async function GetAllTasks(email) {
             })
             .toArray();
 
-        console.log("/tasks : 302 & 200 : Task Documents Found");
+        console.log("/tasks : 302 & 200 : Tasks Found");
         return {
             code: 302,
-            message: "/tasks : 302 & 200 : Task Documents Found",
+            message: "/tasks : 302 & 200 : Tasks Found",
             Data: result,
         };
     } catch (err) {
         console.log("Mongo : 403");
         console.log(err);
-        return { code: 403 };
+        return { code: 403, message: "/tasks/ : 403 : Mongo Error" };
     }
 }
 
-async function UpdateTask(id, Document) {
-    Document["uuid"] = id;
+async function UpdateTask(id, task) {
+    task["uuid"] = id;
 
-    if (await ValidateUpdate(Document)) {
+    if (await ValidateUpdate(task)) {
         try {
             await collection.findOneAndUpdate(
                 {
                     uuid: id,
                 },
                 {
-                    $set: Document,
+                    $set: task,
                 }
             );
-            console.log("/tasks/:id : 302 & 200 : Document Updated");
+            console.log("/task/:id : 302 & 200 : Task Updated");
             return {
                 code: 200,
-                message: "/tasks/:id : 302 & 200 : Document Updated",
+                message: "/task/:id : 302 & 200 : Task Updated",
             };
         } catch (err) {
-            console.log("Mongo : 403");
+            console.log("/task/:id : 403 : Mongo Error");
             console.log(err);
-            return { code: 403, message: "something went wrong" };
+            return { code: 403, message: "/task/:id : 403 : Mongo Error" };
         }
     } else {
         console.log("/tasks/:id : 400 : Please Provide Correct Object type");
@@ -147,20 +152,20 @@ async function UpdateTask(id, Document) {
     }
 }
 
-async function DeleteTask(id) {
+async function DeleteTask(TaskID) {
     try {
         await collection.deleteOne({
-            uuid: id,
+            uuid: TaskID,
         });
-        console.log("/tasks/:id : 302 & 200 : Document Deleted");
+        console.log("/tasks/:id : 302 & 200 : Task Deleted");
         return {
             code: 200,
-            message: "/tasks/:id : 302 & 200 : Document Deleted",
+            message: "/tasks/:id : 302 & 200 : Task Deleted",
         };
     } catch (err) {
-        console.log("Mongo : 403");
+        console.log("/task/:id : 403 : Mongo Error");
         console.log(err);
-        return { code: 403 };
+        return { code: 403, message: "/task/:id : 403 : Mongo Error" };
     }
 }
 

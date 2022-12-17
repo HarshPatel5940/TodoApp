@@ -9,7 +9,7 @@ import {
     NewTask,
     UpdateTask,
     MongoConnect,
-} from "./utilities/mongo.js";
+} from "./utils/mongo.js";
 
 await MongoConnect();
 
@@ -22,20 +22,20 @@ app.get("/", function (req, res) {
 });
 
 app.get("/healthcheck", async function (req, res) {
-    const Status = await CheckConnection();
-    res.status(Status.code).send(Status.message);
+    const ConnectionStatus = await CheckConnection();
+    res.status(ConnectionStatus.code).send(ConnectionStatus.message);
 });
 
 app.post("/task/new/", async function (req, res) {
     const Task = await NewTask(req.body);
-    res.status(Task.code).send(`Code ${Task.code} : ${Task.Data}`);
+    res.status(Task.code).send(`:: ${Task.code} : ${Task.Data}`);
 });
 
 app.get("/tasks", async function (req, res) {
     if (req.body.email) {
         const Task = await GetAllTasks(req.body.email);
         res.status(Task.code).send({
-            message: `Code: ${Task.code} : ${Task.message}`,
+            message: `:: ${Task.code} : ${Task.message}`,
             data: Task.Data,
         });
     } else {
@@ -49,19 +49,19 @@ app.get("/tasks", async function (req, res) {
 app.get("/task/:id", async function (req, res) {
     const Task = await GetTask(req.params.id);
     res.status(Task.code).send({
-        message: `Code: ${Task.code} : ${Task.message}`,
+        message: `:: ${Task.code} : ${Task.message}`,
         data: Task.Data,
     });
 });
 
 app.patch("/task/:id", async function (req, res) {
     const Task = await UpdateTask(req.params.id, req.body);
-    res.status(Task.code).send(`Code: ${Task.code} : ${Task.message}`);
+    res.status(Task.code).send(`:: ${Task.code} : ${Task.message}`);
 });
 
 app.delete("/task/:id", async function (req, res) {
     const Task = await DeleteTask(req.params.id);
-    res.status(Task.code).send(`Code ${Task.code} : ${Task.message}}`);
+    res.status(Task.code).send(`:: ${Task.code} : ${Task.message}}`);
 });
 
 app.listen(process.env.PORT, async () => {
