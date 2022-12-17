@@ -24,6 +24,10 @@ Then run the following command to start the server
 npm run start
 ```
 
+---
 
 
-~ [SRMKzilla](https://github.com/srm-kzilla)
+~ Link to the video about me testing the API. [🔗 Click Here](https://youtu.be/sGLPoKALD-A)
+
+
+~ My Club. [SRMKzilla](https://github.com/srm-kzilla)
