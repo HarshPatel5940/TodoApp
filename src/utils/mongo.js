@@ -43,8 +43,10 @@ async function CheckConnection() {
         const status = await client.db("admin").command({
             ping: 1,
         });
-        const Data = `Uptime: ${Math.floor(process.uptime())} Seconds`;
-        console.log(status, Data);
+        const Data = `Uptime: ${Math.floor(
+            process.uptime()
+        )} Seconds | MongoDB: ${status.ok}`;
+        console.log(Data, status);
         return { code: 200, message: Data };
     } catch (err) {
         console.log(err);
@@ -60,6 +62,24 @@ async function NewTask(task) {
     delete task["uuid"];
 
     task.uuid = await NaNoid();
+    async function CheckConnection() {
+        try {
+            const status = await client.db("admin").command({
+                ping: 1,
+            });
+            const Data = `Uptime: ${Math.floor(
+                process.uptime()
+            )} Seconds | MongoDB: ${status.ok}`;
+            console.log(Data, status);
+            return { code: 200, message: Data };
+        } catch (err) {
+            console.log(err);
+            return {
+                code: 403,
+                message: "Mongo : 403 : ERROR connecting to mongodb",
+            };
+        }
+    }
     task.createdOn = new Date();
 
     if (await ValidateFull(task)) {
@@ -86,6 +106,9 @@ async function GetTask(TaskID) {
         const result = await collection.findOne({
             uuid: TaskID,
         });
+        if (!result) {
+            return { code: 404, message: "/task/:id : 404 : Task NOT FOUND" };
+        }
         console.log("/tasks/:id : 302 & 200 : Task Found");
         return {
             code: 302,
@@ -107,10 +130,19 @@ async function GetAllTasks(email) {
             })
             .toArray();
 
-        console.log("/tasks : 302 & 200 : Tasks Found");
+        if (result.length === 0) {
+            console.log("/tasks : 404 : No Tasks with that email found");
+            return {
+                code: 404,
+                message: "There are no tasks with that email",
+                Data: result,
+            };
+        }
+
+        console.log("/tasks : 302 : Tasks Found");
         return {
             code: 302,
-            message: "/tasks : 302 & 200 : Tasks Found",
+            message: "/tasks : 302 : Tasks Found",
             Data: result,
         };
     } catch (err) {
@@ -125,12 +157,23 @@ async function UpdateTask(id, task) {
 
     if (await ValidateUpdate(task)) {
         try {
-            await collection.findOneAndUpdate(
+            let existingTask = await collection.findOne({ uuid: id });
+            if (!existingTask) {
+                console.log("/task/:id : 404 : Task Not Found");
+                return {
+                    code: 404,
+                    message: "/task/:id : 404 : Task Not Found",
+                };
+            }
+            let result = await collection.findOneAndUpdate(
                 {
                     uuid: id,
                 },
                 {
                     $set: task,
+                },
+                {
+                    upsert: false,
                 }
             );
             console.log("/task/:id : 302 & 200 : Task Updated");
@@ -154,6 +197,11 @@ async function UpdateTask(id, task) {
 
 async function DeleteTask(TaskID) {
     try {
+        let existingTask = await collection.findOne({ uuid: TaskID });
+        if (!existingTask) {
+            console.log("/task/:id : 404 : Task Not Found");
+            return { code: 404, message: "/task/:id : 404 : Task Not Found" };
+        }
         await collection.deleteOne({
             uuid: TaskID,
         });

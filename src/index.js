@@ -64,6 +64,10 @@ app.delete("/task/:id", async function (req, res) {
     res.status(Task.code).send(`:: ${Task.code} : ${Task.message}}`);
 });
 
+app.use((req, res, next) => {
+    res.status(404).send("Sorry, that route doesn't exist");
+});
+
 app.listen(process.env.PORT, async () => {
     console.log(`Starting - Listening at http://localhost:${process.env.PORT}`);
 });
