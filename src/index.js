@@ -6,7 +6,7 @@ import {
     DeleteTask,
     GetAllTasks,
     GetTask,
-    NewTask,
+    CreateNewTask,
     UpdateTask,
     MongoConnect,
 } from "./utils/mongo.js";
@@ -27,41 +27,40 @@ app.get("/healthcheck", async function (req, res) {
 });
 
 app.post("/task/new/", async function (req, res) {
-    const Task = await NewTask(req.body);
-    res.status(Task.code).send(`:: ${Task.code} : ${Task.Data}`);
+    const Task = await CreateNewTask(req.body);
+    res.status(Task.code).send(`${Task.Data}`);
 });
 
 app.get("/tasks", async function (req, res) {
     if (req.body.email) {
         const Task = await GetAllTasks(req.body.email);
         res.status(Task.code).send({
-            message: `:: ${Task.code} : ${Task.message}`,
+            message: `${Task.message}`,
             data: Task.Data,
         });
     } else {
-        res.status(400).send({
-            message: `Code: 400 : Check console`,
-            data: "Please provide email in the body",
-        });
+        res.status(400).send(
+            ">>> 400 : GET_ALL_TASKS : Missing Email Address in the email"
+        );
     }
 });
 
 app.get("/task/:id", async function (req, res) {
     const Task = await GetTask(req.params.id);
     res.status(Task.code).send({
-        message: `:: ${Task.code} : ${Task.message}`,
+        message: `${Task.message}`,
         data: Task.Data,
     });
 });
 
 app.patch("/task/:id", async function (req, res) {
     const Task = await UpdateTask(req.params.id, req.body);
-    res.status(Task.code).send(`:: ${Task.code} : ${Task.message}`);
+    res.status(Task.code).send(`s${Task.message}`);
 });
 
 app.delete("/task/:id", async function (req, res) {
     const Task = await DeleteTask(req.params.id);
-    res.status(Task.code).send(`:: ${Task.code} : ${Task.message}}`);
+    res.status(Task.code).send(`${Task.message}}`);
 });
 
 app.use((req, res, next) => {
