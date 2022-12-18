@@ -70,14 +70,14 @@ async function CreateNewTask(task) {
             console.log(">>> 201 : CREATE_NEW_TASK : New Task Created");
             return {
                 code: 201,
-                Data: ">>> 201 : CREATE_NEW_TASK : New Task Created",
+                message: "201 : CREATE_NEW_TASK : New Task Created",
             };
         } catch (err) {
             console.log(">>> 403 : CREATE_NEW_TASK : Mongo Error");
             console.error(err);
             return {
                 code: 403,
-                message: ">>> 403 : CREATE_NEW_TASK : Mongo Error",
+                message: "403 : CREATE_NEW_TASK : Mongo Error",
             };
         }
     } else {
@@ -107,12 +107,12 @@ async function GetTask(TaskID) {
         console.log(">>> 302: GET_TASK : Found Task");
         return {
             code: 302,
-            message: ">>> 302: GET_TASK : Found Task",
+            message: "302: GET_TASK : Found Task",
             Data: result,
         };
     } catch (err) {
         console.error(err);
-        return { code: 403, message: ">>> 403 : GET_TASK : Mongo Error" };
+        return { code: 403, message: "403 : GET_TASK : Mongo Error" };
     }
 }
 
@@ -137,12 +137,12 @@ async function GetAllTasks(email) {
         console.log(">>> 302: GET_ALL_TASKS : Found Tasks");
         return {
             code: 302,
-            message: ">>> 302: GET_ALL_TASKS : Found Tasks",
+            message: "302: GET_ALL_TASKS : Found Tasks",
             Data: result,
         };
     } catch (err) {
         console.error(err);
-        return { code: 403, message: ">>> 403 : GET_ALL_TASKS : Mongo Error" };
+        return { code: 403, message: "403 : GET_ALL_TASKS : Mongo Error" };
     }
 }
 
@@ -181,7 +181,7 @@ async function UpdateTask(TaskID, task) {
             console.error(err);
             return {
                 code: 403,
-                message: ">>> 403 : UPDATE_TASK : Mongo Error",
+                message: "403 : UPDATE_TASK : Mongo Error",
             };
         }
     } else {
@@ -220,7 +220,7 @@ async function DeleteTask(TaskID) {
         console.error(err);
         return {
             code: 403,
-            message: ">>> 403 : UPDATE_TASK : Mongo Error",
+            message: "403 : UPDATE_TASK : Mongo Error",
         };
     }
 }
